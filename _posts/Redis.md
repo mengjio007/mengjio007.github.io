@@ -1,0 +1,219 @@
+# Redis
+
+> ***NoSQL*** 非关系型数据库
+
+1. 方便扩展
+
+2. 大数据量高性能
+
+3. 数据类型多样.(无需事先设计数据库)
+
+4. RDBMS和NOSQL
+
+   ```sh
+   #传统rdbms
+   -结构化组织
+   -SQL
+   -数据和关系存在单独的表
+   -数据定义语言
+   -一致性
+   -事务
+   ```
+
+   ```sh
+   #NOSQL
+   -不仅仅是数据
+   -无固定查询语言
+   -键值对存储/列存储/文档存储/图形数据库
+   -最终一致性
+   -CAP和BASE
+   -高性能/高可用/高可扩
+   ```
+
+> ***Redis能干嘛***
+
+1. 内存存储
+2. 高速缓存
+3. 发布订阅
+4. 地图信息分析
+5. 计时器/计数器(浏览量)
+6. ...
+
+> 官网  https://redis.io
+
+> 中文官网 http://www.redis.cn/
+
+## LINUX安装
+
+centos下
+
+```sh
+$ wget http://download.redis.io/releases/redis-5.0.5.tar.gz
+$ tar xzf redis-5.0.5.tar.gz
+$ cd redis-5.0.5
+$ yum install gcc-c++  #基本环境
+$ make
+```
+
+启动
+
+```sh
+#  $ src/redis-server
+redis-server /redis.conf
+```
+
+redis配置文件修改redis.conf(通常先拷贝一份进行修改)
+
+```sh
+daemonize yes #默认后台启动
+```
+
+关闭
+
+```sh
+shutdown
+exit
+```
+
+查看进程
+
+```sh
+ps aux |grep redis
+```
+
+## redis-benchmark
+
+测试linux性能
+
+```sh
+#测试100个并发连接100000请求
+redis-benchmark -h localhost -p 6379 -c 100 -n 100000
+```
+
+## 基础知识
+
+redis默认有16个数据库
+
+> 配置文件.conf中database 16
+
+***select切换数据库***
+
+通常默认使用第0个
+
+```sh
+keys * #查看所有的key 
+```
+
+***flushdb 清除当前数据库***
+
+***flushall 清楚全部数据库***
+
+题外话:  6379同mysql 3306
+
+> redis单线程
+
+redis基于内存操作,redis性能瓶颈是机器内存和网络带宽,而非CPU
+
+## 五大基本数据类型
+
+### Redis-Key
+
+Keys *   	查看所有key
+
+EXISTS  	判断key是否存在
+
+move   	 移动当前key
+
+EXPIRE 	 设置过期时间
+
+ttl     		  查看是否过期
+
+### String(字符串)
+
+```sh
+set key value 		#设置字符串键值
+get key 			#获取
+APPEND key value 	#字符串追加,如果不存在就相当于set
+STRLEN key			#获取字符串长度
+INCR key			#原子自增
+DECR key			#原子自减
+INCRBY key nums		#设置nums为步长自减
+DECRBY key nums		#设置nums为步长自减
+GETRANGE key start end 		#截取字符串,起始与结尾,默认从0开始,获取全部字符串是0,-1
+SETRANGE key offset value 	#替换指定位置开始的字符串
+SETEX key time value		#设置过期时间
+SETNX key value				#如果key存在则创建失败,分布式锁常使用,保证当前值存在.
+mset				#设置多个值
+mget				#获取多个值
+msetnx				#存在则创建失败,原子操作,一起成功或者一起失败
+getset				#如果不存在值则返回nil,存在则获取并获取新值
+```
+
+string类型使用场景:value除了字符串还可以是数字
+
+- 计数器
+- 统计多单位数量
+- 对象缓存存储,通过设置过期时间(session等)
+
+### List(列表)
+
+```sh
+LPUSH	 #将一个值或多个值插入列表的头部
+LRANGE	 #获取列表的值.有起点和终点,0 -1获取所有的值
+RPUSH	 #将一个值或多个值插入列表尾部
+LPOP	 #移除列表左第一个元素,第一个
+RPOP	 #移除列表右第一个元素,最后一个
+LINDEX   #通过下表获取值,从左开始
+LREM	 #从存于 key 的列表里移除前 count 次出现的值为 value 的元素。
+LLEN	 #返回存储在 key 里的list的长度。 如果 key 不存在，那么就被看作是空list，并且返回长度为 0。 当存储在 key 里的值不是一个list的话，会返回error。
+LTRIM 	 #修剪(trim)一个已存在的 list，这样 list 就会只包含指定范围的指定元素。
+RPOPLPUSH	#原子性地返回并移除存储在 source 的列表的最后一个元素（列表尾部元素）， 并把该元素放入存储在 destination 的列表的第一个元素位置（列表头部）。
+RPUSHX	 #从队列右边入队一个元素,仅在队列存在时有效
+BLPOP
+BRPOP
+BRPOPLPUSH
+LINSERT
+```
+
+> 实际上是一个链表
+
+应用:消息队列,栈
+
+### Set(集合)
+
+***set中值不能重复,且无序***
+
+```sh
+SADD		#set集合中添加元素
+SMEMBERS	#获取集合里所有元素
+SISMEMBER	#确定一个给定的值是否是集合成员
+SCARD		#获取集合中元素数量
+SREM		#移除集合中的指定元素
+SRANDMEMBER	#从集合里随机获取一个元素
+SPOP		#删除并获取一个集合中的元素(随机)
+SMOVE		#将指定元素移到两一个集合
+SDIFF		#返回一个集合与给定集合的差集的元素.
+SINTER		#交集
+SUNION		#并集
+```
+
+数字集合类: 交集,并集,差集
+
+应用: 共同关注,推荐好友
+
+### Hash(哈希)
+
+map集合,key-map,值是一个map集合
+
+```sh
+HSET		#设置哈希里面一个字段的值
+HGET		#获取哈希中字段的值
+HMSET		#设置 key 指定的哈希集中指定字段的值。该命令将重写所有在哈希集中存在的字段。如果 key 指定的哈希集不存在，会创建一个新的哈希集并与 key 关联
+
+```
+
+
+
+
+
+### ZSet
