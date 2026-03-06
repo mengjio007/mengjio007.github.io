@@ -1,0 +1,99 @@
+baseURL: "https://mengjio007.github.io/"
+title: "mengjio007 的博客"
+paginate: 5
+
+# 使用 Hugo Modules 引入 PaperMod 主题（构建时自动拉取）
+module:
+  imports:
+  - path: github.com/adityatelange/hugo-PaperMod
+theme: ["PaperMod"]
+
+# 中文支持
+defaultContentLanguage: "zh"
+languageCode: "zh-CN"
+languages:
+  zh:
+    languageName: "中文"
+    weight: 1
+
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+params:
+  env: production
+  title: "mengjio007 的博客"
+  description: "欢迎来到我的个人博客，分享技术、生活与思考"
+  keywords: [博客, 技术, 编程, PaperMod]
+  author: mengjio007
+  DateFormat: "2006年1月2日"
+  defaultTheme: auto
+  disableThemeToggle: false
+
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowWordCount: true
+  ShowRssButtonInSectionTermList: true
+  UseHugoToc: true
+  disableSpecial1stPost: false
+  disableScrollToTop: false
+  comments: false
+  hidemeta: false
+  hideSummary: false
+  showtoc: false
+  tocopen: false
+
+  homeInfoParams:
+    Title: "你好 👋"
+    Content: "欢迎来到我的博客，这里记录技术学习与生活点滴"
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/mengjio007"
+
+  cover:
+    hidden: true
+    hiddenInList: true
+    hiddenInSingle: true
+
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 0
+    limit: 10
+    keys: ["title", "permalink", "summary", "content"]
+
+menu:
+  main:
+    - identifier: archives
+      name: 归档
+      url: /archives/
+      weight: 10
+    - identifier: categories
+      name: 分类
+      url: /categories/
+      weight: 20
+    - identifier: tags
+      name: 标签
+      url: /tags/
+      weight: 30
+    - identifier: about
+      name: 关于
+      url: /about/
+      weight: 40
+
+pygmentsUseClasses: true
+markup:
+  highlight:
+    noClasses: false
