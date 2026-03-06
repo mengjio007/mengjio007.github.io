@@ -21,8 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
+
+      - name: Clone PaperMod theme
+        run: git clone https://github.com/adityatelange/hugo-PaperMod themes/PaperMod --depth=1
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
